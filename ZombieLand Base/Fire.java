@@ -51,6 +51,7 @@ public class Fire extends Actor
     private void checkForZombies()
     {
         while (fireMode == FIRE && isTouching(Zombie.class)) {
+            ((Zombie)getOneIntersectingObject(Zombie.class)).playSound(Zombie.ZOMBIE_SCREAM);
             removeTouching(Zombie.class);
             fireMode = SMOKE;
             frame = 0;
