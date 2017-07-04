@@ -24,8 +24,5 @@ public class MyZombie extends Zombie
     public void plan() 
     {
         move();
-        move();
-        move();
-        move();
     }
 }
