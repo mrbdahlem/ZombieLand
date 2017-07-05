@@ -97,9 +97,9 @@ public abstract class Zombie extends Actor
      */
     public boolean stillTrying()
     {
-        return undead && !won;
+        return undead && !won && !((ZombieLand)getWorld()).isFinished();
     }
-    
+
     /**
      * Move forward one step.
      */
@@ -110,6 +110,7 @@ public abstract class Zombie extends Actor
                 synchro.wait();
                 if (stillTrying()) {
                     boolean success = handleWall();
+                    success = success && handleBucket();
                     if (success) {
                         super.move(1);
                     }
@@ -156,13 +157,84 @@ public abstract class Zombie extends Actor
     }
 
     /**
+     * Pick up brains if they exist.  End if not.
+     */
+    public final void takeBrain()
+    {
+        synchronized (synchro) {
+            try {
+                synchro.wait();
+                if (stillTrying()) {
+                    if (isTouching(Brain.class)) {
+                        numBrains++;
+                        removeTouching(Brain.class);
+                    }
+                    else {
+                        ((ZombieLand)getWorld()).finish("Zombie no get brain.", false);
+                    }
+                }
+            }
+            catch (InterruptedException e) {
+            }
+        }
+    }
+
+    /**
+     * Put down a brain if the Zombie has one.  End if not.
+     */
+    public final void putBrain()
+    {
+        synchronized (synchro) {
+            try {
+                synchro.wait();
+                if (stillTrying()) {
+                    if (numBrains > 0) {
+                        numBrains--;
+                        getWorld().addObject(new Brain(), getX(), getY());
+                    }
+                    else {
+                        ((ZombieLand)getWorld()).finish("Zombie no have brain.", false);
+                    }
+                }
+            }
+            catch (InterruptedException e) {
+            }
+        }
+    }
+
+    /**
+     * Put down a brain if the Zombie has one.  End if not.
+     */
+    public final boolean haveBrains()
+    {
+        synchronized (synchro) {
+            try {
+                synchro.wait();
+                return numBrains > 0;
+            }
+            catch (InterruptedException e) {
+            }
+
+            return false;
+        }
+    }
+
+    /**
+     * Check if there is a brain where the zombie is standing.
+     */
+    public final boolean isBrainHere() {
+        return (isTouching(Brain.class));
+    }
+
+    /**
      * Check if there is a wall or the edge of the world in front of the zombie.
      */
     public final boolean isFrontClear() {
         synchronized (synchro) {
             try {
                 synchro.wait();
-                return checkFront(null, 1) == null;
+                return checkFront(Wall.class, 1) == null &&
+                        checkFront(null, 1) == null;
             }
             catch (InterruptedException e) {
             }
@@ -288,17 +360,64 @@ public abstract class Zombie extends Actor
         return textImg;
     }
 
-    
     /**
      * Handle a wall in front of the zombie.  Everything ends if we crash into a wall.
      */
     private boolean handleWall()
     {
-        if (checkFront(null, 1) != null) {
+        if (checkFront(Wall.class, 1) != null || checkFront(null, 1) != null) {
             ((ZombieLand)getWorld()).finish("Zombie hit wall.", false);
             return false;
         }
         return true;
+    }
+
+    /**
+     * Handle a bucket in front of the zombie.  Running into a bucket tries to push it.  If it can't be pushed,
+     * everything ends.
+     */
+    private boolean handleBucket()
+    {
+        Bucket bucket = (Bucket)checkFront(Bucket.class, 1);
+        if (bucket != null)
+        {
+            if (tryPush(bucket, getRotation()) == false) {
+                ((ZombieLand)getWorld()).finish("Bucket no move.", false);
+                return false;
+            }
+        }
+        return true;
+    }
+
+    /**
+     * Attempt to push an object in a given direction
+     */
+    private boolean tryPush(Actor item, int dir)
+    {
+        dir = dir / 90;
+        int dx = 0;
+        int dy = 0;
+
+        if (dir == 0) {
+            dx = 1;
+        }
+        else if (dir == 1) {
+            dy = 1;
+        }
+        else if (dir == 2) {
+            dx = -1;
+        }
+        else {
+            dy = -1;
+        }
+
+        if (checkFront(Wall.class, 2) == null && checkFront(null, 2) == null) {
+            item.setLocation(item.getX()+dx, item.getY()+dy);
+            return true;
+        }
+        else {
+            return false;
+        }
     }
 
     /**

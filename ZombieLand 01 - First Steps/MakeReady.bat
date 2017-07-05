@@ -1,0 +1,1 @@
+"C:\Program Files\Java\jdk1.7.0_21\bin\javadoc" -sourcepath . -d ./doc -subpackages .
