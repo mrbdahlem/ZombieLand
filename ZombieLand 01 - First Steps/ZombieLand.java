@@ -18,13 +18,16 @@ public class ZombieLand extends World
      */
     public ZombieLand()
     {    
-        // Create a new world with 600x400 cells with a cell size of 1x1 pixels.
+        // Create a new world 10 cells wide and 3 cells high with a cell size of 64x64 pixels.
         super(5, 1, 64); 
-
+        
+        // Mark the problem as not finished
         done = false;
 
+        // Determine which objects appear on top of other objects
         setPaintOrder(Actor.class, Zombie.class, ZombieDetector.class);
         
+        // Populate the world
         prepare();
     }
     
@@ -34,8 +37,8 @@ public class ZombieLand extends World
      */
     private void prepare()
     {
-        MyZombie myzombie = new MyZombie();
-        addObject(myzombie,0,1);
+        MyZombie karl = new MyZombie();
+        addObject(karl,0,0);
         ZombieGoal zombiegoal = new ZombieGoal();
         addObject(zombiegoal,4,1);
     }
@@ -111,7 +114,6 @@ public class ZombieLand extends World
     public void finish(boolean success)
     {
         done = true;
-        //Greenfoot.stop();
     }
     
     /**
@@ -121,7 +123,6 @@ public class ZombieLand extends World
     {
         showMessage(msg);
         done = true;
-        //Greenfoot.stop();
     }
 
     /**

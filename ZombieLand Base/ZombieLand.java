@@ -18,13 +18,16 @@ public class ZombieLand extends World
      */
     public ZombieLand()
     {    
-        // Create a new world with 600x400 cells with a cell size of 1x1 pixels.
+        // Create a new world 5 cells wide and 1 cell high with a cell size of 64x64 pixels.
         super(5, 1, 64); 
 
+        // Mark the problem as not finished
         done = false;
 
-        setPaintOrder(Actor.class, Fire.class, Zombie.class, Bucket.class, Brain.class, ZombieDetector.class, Wall.class);
+        // Determine which objects appear on top of other objects
+        setPaintOrder(Actor.class, Zombie.class, ZombieDetector.class);
         
+        // Populate the world
         prepare();
     }
     

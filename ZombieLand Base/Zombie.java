@@ -114,6 +114,10 @@ public abstract class Zombie extends Actor
                     if (success) {
                         super.move(1);
                     }
+                    else {
+                        undead = false;
+                        die();
+                    }
                 }
             }
             catch (InterruptedException e) {
