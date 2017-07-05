@@ -1,6 +1,20 @@
 import greenfoot.*;  // (World, Actor, GreenfootImage, Greenfoot and MouseInfo)
 import java.util.List;
 
+import java.io.File;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.DocumentBuilder;
+import org.w3c.dom.Document;
+import org.w3c.dom.NodeList;
+import org.w3c.dom.Node;
+import org.w3c.dom.Element;
+import java.net.URL;
+import java.net.URLClassLoader;
+import java.lang.reflect.Constructor;
+import java.lang.reflect.Method;
+import java.util.List;
+import java.util.ArrayList;
+
 /**
  * Write a description of class MyWorld here.
  * 
@@ -11,44 +25,148 @@ public class ZombieLand extends World
 {
     Actor message = null;
     private boolean done = false;
+    private List<GoalObject> goal;
 
     /**
-     * Constructor for objects of class MyWorld.
-     * 
+     * Load the world description file and initialize the world
      */
     public ZombieLand()
-    {    
-        // Create a new world 5 cells wide and 1 cell high with a cell size of 64x64 pixels.
-        super(5, 1, 64); 
+    {   
+        // Create a temporary world;
+        super(1,1,1);
+        
+        try {
+            // Create a Classloader to load the actors for the world
+            URL url = (new File(".")).toURL();
+            URL[] urls = new URL[]{url};
+            ClassLoader cl = new URLClassLoader(urls, this.getClass().getClassLoader());
+            
+            // Open and parse the world description XML File
+            DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
+            DocumentBuilder db = dbf.newDocumentBuilder();
+            Document doc = db.parse(new File("world.xml"));
+            doc.getDocumentElement().normalize();
+            
+            // Get a handle to the root of the world description
+            Element root = doc.getDocumentElement();
+            
+            // Set the world width and height
+            int width = Integer.parseInt(root.getAttribute("width"));
+            int height = Integer.parseInt(root.getAttribute("height"));
+            ZombieLand realWorld = new ZombieLand(width, height, 64);
+            Greenfoot.setWorld(realWorld);
 
-        // Mark the problem as not finished
-        done = false;
+            // Get handles to the initial and objective description nodes
+            Node initial = root.getElementsByTagName("initial").item(0);
+            Node objective = root.getElementsByTagName("objective").item(0);
+                       
+            // Load and place initial objects
+            NodeList initialObjects = ((Element)initial).getElementsByTagName("object");
+            for (int i = 0; i < initialObjects.getLength(); i++) {
+                Element obj = (Element)initialObjects.item(i);
+                String className = obj.getAttribute("classname");
+                
+                Class objClass = cl.loadClass(className);
+               
+                NodeList locations = obj.getElementsByTagName("location");
+                for (int j = 0; j < locations.getLength(); j++) {
+                    Element pos = (Element)locations.item(j);
+                    
+                    int x = Integer.parseInt(pos.getAttribute("x"));
+                    int y = Integer.parseInt(pos.getAttribute("y"));
+                    
+                    int count = 1;
+                    
+                    if (pos.hasAttribute("count")) {
+                        count = Integer.parseInt(pos.getAttribute("count"));
+                    }
+                    Constructor constructor = objClass.getConstructor();
+                    
+                    for (; count > 0; count--) {
+                        realWorld.addObject((Actor)constructor.newInstance(), x, y);
+                    }
+                }
+            }
+            
+            realWorld.goal = new ArrayList<GoalObject>();
+            
+            NodeList goalObjects = ((Element)objective).getElementsByTagName("object");
+            for (int i = 0; i < goalObjects.getLength(); i++) {
+                Element gEl = (Element)goalObjects.item(i);
+                
+                String classname = gEl.getAttribute("classname");
+                
+                NodeList locations = gEl.getElementsByTagName("location");
+                for (int j = 0; j < locations.getLength(); j++) {
+                    Element pos = (Element)locations.item(j);
+                    
+                    GoalObject gObj = new GoalObject();
+                    gObj.name = classname;                    
+                    gObj.x = Integer.parseInt(pos.getAttribute("x"));
+                    gObj.y = Integer.parseInt(pos.getAttribute("y"));
+                    
+                    if (pos.hasAttribute("count")) {
+                        gObj.count = Integer.parseInt(pos.getAttribute("count"));
+                    }
+                    
+                    NodeList callList = pos.getElementsByTagName("call");
+                    if (callList.getLength() > 0) {
+                        gObj.calls = new ArrayList<String[]>();
+                        
+                        for (int k = 0; k < callList.getLength(); k++) {
+                            Element method = ((Element)callList.item(k));
+                            String[] callSignature = new String[2];
+                            callSignature[0] = method.getAttribute("name");
+                            callSignature[1] = method.getAttribute("value");
+                            
+                            gObj.calls.add(callSignature);
+                        }
+                    }    
+                    
+                    realWorld.goal.add(gObj);
+                }
+            }
+            
+            // Get a handle to the paintOrder class list
+            NodeList paintOrder = ((Element)root.getElementsByTagName("paintOrder")
+                                    .item(0)).getElementsByTagName("class");
+            
+            Class[] classes = new Class[paintOrder.getLength()];
+            for (int i = 0; i < classes.length; i++) {
+                String className = ((Element)paintOrder.item(i)).getAttribute("name");
+                classes[i] = Class.forName(className);
+            }
+            
+            realWorld.setPaintOrder(classes);
+        }
+        catch (Exception e) {
+        }
 
         // Determine which objects appear on top of other objects
-        setPaintOrder(Actor.class, Zombie.class, ZombieDetector.class);
+        //setPaintOrder(Actor.class, Zombie.class, ZombieDetector.class);
         
         // Populate the world
-        prepare();
     }
     
     /**
-     * Prepare the world for the start of the program.
-     * That is: create the initial objects and add them to the world.
+     * Create a ZombieLand with a given size;
      */
-    private void prepare()
+    public ZombieLand(int width, int height, int cellSize)
     {
-        MyZombie myzombie = new MyZombie();
-        addObject(myzombie,0,1);
-        ZombieGoal zombiegoal = new ZombieGoal();
-        addObject(zombiegoal,4,1);
+        super(width, height, cellSize);
     }
-
+    
     /**
      * Check the status of the Zombies every frame
      */
     public void act()
     {
-        checkZombies();
+        if (!done) {
+            if (checkZombies() ) {
+                if (checkGoal()) {
+                }
+            }
+        }
     }
     
     /**
@@ -114,7 +232,6 @@ public class ZombieLand extends World
     public void finish(boolean success)
     {
         done = true;
-        //Greenfoot.stop();
     }
     
     /**
@@ -124,7 +241,6 @@ public class ZombieLand extends World
     {
         showMessage(msg);
         done = true;
-        //Greenfoot.stop();
     }
 
     /**
@@ -138,41 +254,120 @@ public class ZombieLand extends World
     /**
      * End the world if there aren't any zombies left.
      */
-    public void checkZombies()
+    public boolean checkZombies()
     {    
         if (!done) {
             List<Zombie> zombies = getObjects(Zombie.class);
 
             if (zombies.size() == 0) {
                 finish("Zombie no more.", false);
+                return false;
             }
             else {
-                boolean allWinners = true; // Assume that everyone is a winner, until proven wrong.
                 boolean allDead = true;
                 for (Zombie z : zombies) {
-                    if (!z.hasWon()) {
-                        allWinners = false;
-                    }
                     if (!z.isDead()) {
                         allDead = false;
                     }
                 }
                 
-                if (allWinners) {
-                    finish("Zombie do good.", false);
-                }
-                else if (allDead) {
+                if (allDead) {
                     finish("Zombie dead.", false);
+                    return false;
                 }
             }
         }
+        return true;
     }
-
+    
     /**
-     * The world has stopped.  Was the mission successful?
+     * Determine if the goal has been reached
      */
-    public void stopped()
+    public boolean checkGoal()
     {
-
+        List<Actor> actors = getObjects(null);
+        List<GoalObject> state = new ArrayList<GoalObject>();
+        
+        for (Actor a : actors) {
+            GoalObject gObj = new GoalObject();
+            gObj.a = a;
+            gObj.name = a.getClass().getName();
+            gObj.x = a.getX();
+            gObj.y = a.getY();
+            
+            if (!gObj.name.contains("$")) {
+                boolean duplicate = false;
+                
+                for (int i = 0; i < state.size(); i++) {
+                    GoalObject o = state.get(i);
+                    
+                    if (o.name.equals(gObj.name) &&
+                        o.x == gObj.x &&
+                        o.y == gObj.y) {
+                            duplicate = true;
+                            o.count = o.count + 1;
+                            break;
+                    }
+                }
+                
+                if (!duplicate) {
+                    state.add(gObj);
+                }
+            }
+        }
+        
+        if (goal != null && state.size() == goal.size()) {
+            if (state.containsAll(goal)) {
+                finish("Zombie do good.", true);
+                return true;
+            }
+        }
+        
+        return false;
+    }
+    
+    private class GoalObject {
+        public String name;
+        public int count = 1;
+        public int x;
+        public int y;
+        public List<String[]> calls;
+        public Actor a;
+        
+        public boolean equals(Object o) {
+            if (o instanceof GoalObject) {
+                GoalObject other = (GoalObject)o;
+                
+                boolean calls = true;
+                
+                if (this.calls != null) {
+                    if (this.name.equals(other.name)) {
+                        for (String[] methodCall : this.calls) {
+                            String methodName = methodCall[0];
+                            try {
+                                Class c = Class.forName(this.name);
+                                Method m = c.getMethod(methodName, null);
+                                
+                                String rval = m.invoke(other.a, null).toString();
+                                
+                                if (!rval.equals(methodCall[1])){
+                                    calls = false;
+                                }
+                            }
+                            catch (Exception e) {
+                                e.printStackTrace();
+                            }
+                        }
+                    }
+                }
+                
+                return this.name.equals(other.name) &&
+                       this.x == other.x &&
+                       this.y == other.y &&
+                       this.count == other.count &&
+                       calls == true;
+            }
+            return false;
+        }
     }
 }

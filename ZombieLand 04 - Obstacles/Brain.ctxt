@@ -1,0 +1,13 @@
+#BlueJ class context
+comment0.target=Brain
+comment0.text=\r\n\ Write\ a\ description\ of\ class\ Brain\ here.\r\n\ \r\n\ @author\ (your\ name)\ \r\n\ @version\ (a\ version\ number\ or\ a\ date)\r\n
+comment1.params=
+comment1.target=Brain()
+comment1.text=\r\n\ A\ disembodied\ brain.\ \ Zombies\ love\ brains.\r\n
+comment2.params=
+comment2.target=void\ act()
+comment2.text=\r\n\ Contemplates\ the\ meaning\ of\ existance;\ and\ display\ the\ number\ of\ brains\r\n\ in\ this\ cell.\r\n
+comment3.params=
+comment3.target=void\ showNumBrainsHere()
+comment3.text=\r\n\ Update\ the\ image\ of\ this\ brain\ with\ the\ number\ of\ brains\ occupying\ this\r\n\ cell.\r\n
+numComments=4
