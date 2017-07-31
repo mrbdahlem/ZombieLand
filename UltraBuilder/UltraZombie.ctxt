@@ -1,0 +1,13 @@
+#BlueJ class context
+comment0.target=UltraZombie
+comment0.text=\r\n\ Write\ a\ description\ of\ class\ UltraZombie\ here.\r\n\ \r\n\ @author\ bdahlem\ \r\n\ @version\ 7/26/2017\r\n
+comment1.params=
+comment1.target=int\ isFacing()
+comment1.text=\r\n\ Determine\ which\ direction\ the\ UltraZombie\ is\ facing.\r\n\ \r\n\ @return\ a\ value\ of\ EAST,SOUTH,WEST,\ or\ NORTH\r\n
+comment2.params=
+comment2.target=void\ turnLeft()
+comment2.text=\r\n\ Turn\ 90\ degrees\ to\ the\ left\r\n
+comment3.params=
+comment3.target=void\ turnAround()
+comment3.text=\r\n\ Turn\ 180\ degrees\r\n
+numComments=4

@@ -126,9 +126,9 @@ public class WorldBuilder extends World
         location.setAttribute("x", "" + a.getX());
         location.setAttribute("y", "" + a.getY());
         location.setAttribute("dir", "" + a.getRotation());
-        
+
         obj.appendChild(location);
-        
+
         return obj;
     }
 
@@ -142,9 +142,9 @@ public class WorldBuilder extends World
         location.setAttribute("x", "" + a.getX());
         location.setAttribute("y", "" + (a.getY() - (sizey + 1)));
         location.setAttribute("dir", "" + a.getRotation());
-        
+
         obj.appendChild(location);
-        
+
         return obj;
     }
 
@@ -154,36 +154,36 @@ public class WorldBuilder extends World
         Element newLocation = (Element)obj.getElementsByTagName("location").item(0);
         String newx = newLocation.getAttribute("x");
         String newy = newLocation.getAttribute("y");
-        
+
         String classname = obj.getAttribute("classname");
 
         for (int i = 0; i < others.getLength(); i++) {
             Element el = (Element)others.item(i);
             if (el.getAttribute("classname") == classname) {
                 NodeList locations = ((Element)others.item(i)).getElementsByTagName("location");
-                
+
                 for (int j = 0; j < locations.getLength(); j++) {
                     Element location = (Element)locations.item(j);
-                    
+
                     if (location.getAttribute("x").equals(newx) &&
-                        location.getAttribute("y").equals(newy)) {
-                        
+                    location.getAttribute("y").equals(newy)) {
+
                         int count = 2;
                         if (location.hasAttribute("count")) {
                             count = Integer.parseInt(location.getAttribute("count")) + 1;
                         }
-                        
+
                         location.setAttribute("count", "" + count);
-                                               
+
                         return;
                     }
                 }
-                
+
                 el.appendChild(newLocation);
                 return;
             }
         }
-        
+
         parent.appendChild(obj);
     }
 
@@ -237,7 +237,6 @@ public class WorldBuilder extends World
         Greenfoot.setWorld(w);
     }
 
-    
     public void nextWorld()
     {
         int nextIndex = worldIndex + 1;
@@ -267,4 +266,5 @@ public class WorldBuilder extends World
             Greenfoot.setWorld(w);
         }
     }
+
 }
