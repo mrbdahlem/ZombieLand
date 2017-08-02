@@ -9,10 +9,10 @@ import greenfoot.*;  // (World, Actor, GreenfootImage, Greenfoot and MouseInfo)
 public class MyZombie extends UltraZombie
 {
     /**
-     * Karl's planned out actions
+     * Karl's planned out actions to solve any maze.
      */
     public void plan() 
     {
-        
+       
     }
 }

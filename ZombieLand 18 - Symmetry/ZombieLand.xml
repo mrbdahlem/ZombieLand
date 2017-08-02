@@ -92,17 +92,17 @@
             <location dir="0" x="10" y="6"/>
             <location count="3" dir="0" x="10" y="5"/>
             <location dir="0" x="10" y="3"/>
-            <location count="3" dir="0" x="10" y="1"/>
+            <location dir="0" x="10" y="1"/>
             <location dir="0" x="10" y="0"/>
             <location count="2" dir="0" x="2" y="2"/>
             <location dir="0" x="2" y="4"/>
             <location dir="0" x="2" y="5"/>
-            <location count="3" dir="0" x="2" y="3"/>
+            <location count="2" dir="0" x="2" y="3"/>
             <location dir="0" x="2" y="6"/>
             <location count="2" dir="0" x="2" y="1"/>
             <location dir="0" x="0" y="2"/>
             <location count="2" dir="0" x="0" y="4"/>
-            <location count="3" dir="0" x="0" y="3"/>
+            <location dir="0" x="0" y="3"/>
             <location count="2" dir="0" x="0" y="6"/>
             <location dir="0" x="0" y="5"/>
             <location dir="0" x="0" y="11"/>
@@ -113,7 +113,7 @@
             <location count="4" dir="0" x="12" y="7"/>
             <location dir="0" x="12" y="4"/>
             <location dir="0" x="12" y="2"/>
-            <location count="2" dir="0" x="12" y="3"/>
+            <location dir="0" x="12" y="3"/>
             <location dir="0" x="12" y="0"/>
             <location dir="0" x="12" y="9"/>
          </object>

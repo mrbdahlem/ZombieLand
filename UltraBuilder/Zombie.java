@@ -246,7 +246,7 @@ public abstract class Zombie extends Actor
     }
 
     /**
-     * Put down a brain if the Zombie has one.  End if not.
+     * Check if this Zombie is carrying a brain.
      */
     public final boolean haveBrains()
     {
