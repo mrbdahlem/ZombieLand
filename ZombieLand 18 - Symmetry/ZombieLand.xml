@@ -209,12 +209,24 @@
             <location dir="0" x="6" y="0"/>
          </object>
 	 <object classname="MyZombie">
-            <location x="7" y="2"/>
-            <location x="6" y="4"/>
-            <location x="7" y="6"/>
-            <location x="6" y="8"/>
-            <location x="7" y="10"/>
-            <location x="6" y="12"/>
+            <location x="7" y="2">
+                <call name="hasWon" value="true"/>
+            </location>
+            <location x="6" y="4">
+                <call name="hasWon" value="true"/>
+            </location>
+            <location x="7" y="6">
+                <call name="hasWon" value="true"/>
+            </location>
+            <location x="6" y="8">
+                <call name="hasWon" value="true"/>
+            </location>
+            <location x="7" y="10">
+                <call name="hasWon" value="true"/>
+            </location>
+            <location x="6" y="12">
+                <call name="hasWon" value="true"/>
+            </location>
          </object>
       </objective>
    </world>
