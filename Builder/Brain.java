@@ -34,47 +34,58 @@ public class Brain extends Actor
      */
     private void showNumBrainsHere()
     {
-        //synchronized(Zombie.class)
+        synchronized(this.getClass())
         {
-            int numBrains = getIntersectingObjects(Brain.class).size() + 1;
+            try
+            {
+                //this.getClass().wait();
             
-            if (numBrains > 1) {
-                String msg = "" + (numBrains);
+                int numBrains = getIntersectingObjects(Brain.class).size() + 1;
                 
-                GreenfootImage img = new GreenfootImage(baseImage);
-        
-                java.awt.Font f = new java.awt.Font("MONOSPACED", java.awt.Font.BOLD, 28);
-                Graphics g = img.getAwtImage().createGraphics();
-                g.setFont(f);
-                FontMetrics fm = g.getFontMetrics(f);
-                
-                int textWidth = fm.stringWidth(msg);
-                int textHeight = fm.getHeight() + fm.getMaxDescent();
-                int textBottom = textHeight - fm.getMaxDescent();
+                if (numBrains > 1) {
+                    String msg = "" + (numBrains);
                     
-                g = img.getAwtImage().createGraphics();
-                g.setColor(java.awt.Color.BLACK);
-                g.setFont(f);   
+                    GreenfootImage img = new GreenfootImage(baseImage);
+            
+                    java.awt.Font f = new java.awt.Font("MONOSPACED", java.awt.Font.BOLD, 28);
+                    Graphics g = img.getAwtImage().createGraphics();
+                    g.setFont(f);
+                    FontMetrics fm = g.getFontMetrics(f);
+                    
+                    int textWidth = fm.stringWidth(msg);
+                    int textHeight = fm.getHeight() + fm.getMaxDescent();
+                    int textBottom = textHeight - fm.getMaxDescent();
+                        
+                    g = img.getAwtImage().createGraphics();
+                    g.setColor(java.awt.Color.BLACK);
+                    g.setFont(f);   
+                    
+                    int x = (img.getWidth()-textWidth) / 2;
+                    
+                    g.drawString(msg, x-1, textBottom-1);
+                    g.drawString(msg, x, textBottom-1);
+                    g.drawString(msg, x+1, textBottom-1);
+                    g.drawString(msg, x-1, textBottom);
+                    g.drawString(msg, x+1, textBottom);
+                    g.drawString(msg, x-1, textBottom+1);
+                    g.drawString(msg, x, textBottom+1);
+                    g.drawString(msg, x+1, textBottom+1);
+                    
+                    g.setColor(java.awt.Color.WHITE);
+                    g.drawString(msg, x, textBottom);
+                    
+                    setImage(img);
+                }
+                else {
+                    setImage(baseImage);
+                }
                 
-                int x = (img.getWidth()-textWidth) / 2;
-                
-                g.drawString(msg, x-1, textBottom-1);
-                g.drawString(msg, x, textBottom-1);
-                g.drawString(msg, x+1, textBottom-1);
-                g.drawString(msg, x-1, textBottom);
-                g.drawString(msg, x+1, textBottom);
-                g.drawString(msg, x-1, textBottom+1);
-                g.drawString(msg, x, textBottom+1);
-                g.drawString(msg, x+1, textBottom+1);
-                
-                g.setColor(java.awt.Color.WHITE);
-                g.drawString(msg, x, textBottom);
-                
-                setImage(img);
+                //this.getClass().notify();
             }
-            else {
-                setImage(baseImage);
+            catch (Exception e)
+            {
             }
         }
+        
     }
 }

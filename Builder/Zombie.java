@@ -50,6 +50,9 @@ public abstract class Zombie extends Actor
         thinker = new Thread(new Runnable()
         {
             public void run() {
+                // Wait until the zombie is in a world
+                while (getWorld() == null);
+                
                 plan();
                 synchronized (Zombie.class) {
                     try {
@@ -68,6 +71,7 @@ public abstract class Zombie extends Actor
         thinker.start();
     }
 
+    
     /**
      * Perform one animation step.
      */
@@ -246,7 +250,7 @@ public abstract class Zombie extends Actor
     }
 
     /**
-     * Put down a brain if the Zombie has one.  End if not.
+     * Check if this Zombie is carrying a brain.
      */
     public final boolean haveBrains()
     {
@@ -274,7 +278,10 @@ public abstract class Zombie extends Actor
      * Check if there is a brain where the zombie is standing.
      */
     public final boolean isBrainHere() {
-        return (isTouching("Brain"));
+        synchronized (Zombie.class)
+        {
+            return (isTouching("Brain"));
+        }
     }
 
     /**

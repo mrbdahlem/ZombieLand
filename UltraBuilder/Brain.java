@@ -34,11 +34,11 @@ public class Brain extends Actor
      */
     private void showNumBrainsHere()
     {
-        synchronized(Zombie.class)
+        synchronized(this.getClass())
         {
             try
             {
-                //Zombie.class.wait();
+                //this.getClass().wait();
             
                 int numBrains = getIntersectingObjects(Brain.class).size() + 1;
                 
@@ -79,6 +79,8 @@ public class Brain extends Actor
                 else {
                     setImage(baseImage);
                 }
+                
+                //this.getClass().notify();
             }
             catch (Exception e)
             {

@@ -119,12 +119,34 @@ public class ZombieLand extends World
                     count = Integer.parseInt(pos.getAttribute("count"));
                 }
                 
+                NodeList callList = pos.getElementsByTagName("call");
+                List<String[]> calls = null;
+                if (callList.getLength() > 0) {
+                    calls = new ArrayList<>();
+                    
+                    for (int k = 0; k < callList.getLength(); k++) {
+                        Element method = ((Element)callList.item(k));
+                        String[] callSignature = new String[2];
+                        callSignature[0] = method.getAttribute("name");
+                        callSignature[1] = method.getAttribute("value");
+                        
+                        calls.add(callSignature);
+                    }
+                }
                 // Create instances at this location
                 Constructor constructor = objClass.getConstructor();
                 for (; count > 0; count--) {
                     Actor a = (Actor)constructor.newInstance();
                     realWorld.addObject(a, x, y);
                     a.setRotation(dir);
+                    
+                    if (calls != null) {
+                        for (String[] call : calls) {
+                            Class[] params = {int.class};
+                            Method m = objClass.getMethod(call[0], params);
+                            m.invoke(a, Integer.parseInt(call[1]));
+                        }
+                    }
                 }
             }
         }
@@ -211,9 +233,12 @@ public class ZombieLand extends World
     public void act()
     {
         if (!done) {
-            if (checkZombies() ) {
-                if (checkGoal()) {
-                }
+            synchronized (Zombie.class) {
+                          
+                if (checkZombies() ) {
+                    if (checkGoal()) {
+                    }
+                }                    
             }
         }
     }
@@ -336,40 +361,42 @@ public class ZombieLand extends World
     {
         List<Actor> actors = getObjects(null);
         List<GoalObject> state = new ArrayList<GoalObject>();
-        
-        for (Actor a : actors) {
-            GoalObject gObj = new GoalObject();
-            gObj.a = a;
-            gObj.name = a.getClass().getName();
-            gObj.x = a.getX();
-            gObj.y = a.getY();
-            gObj.dir = a.getRotation();
-            
-            if (!gObj.name.contains("$")) {
-                boolean duplicate = false;
+        synchronized (Zombie.class) {
+            for (Actor a : actors) {
+                GoalObject gObj = new GoalObject();
+                gObj.a = a;
+                gObj.name = a.getClass().getName();
+              
+                gObj.x = a.getX();
+                gObj.y = a.getY();
+                gObj.dir = a.getRotation();
                 
-                for (int i = 0; i < state.size(); i++) {
-                    GoalObject o = state.get(i);
+                if (!gObj.name.contains("$")) {
+                    boolean duplicate = false;
                     
-                    if (o.name.equals(gObj.name) &&
-                        o.x == gObj.x &&
-                        o.y == gObj.y) {
-                            duplicate = true;
-                            o.count = o.count + 1;
-                            break;
+                    for (int i = 0; i < state.size(); i++) {
+                        GoalObject o = state.get(i);
+                        
+                        if (o.name.equals(gObj.name) &&
+                            o.x == gObj.x &&
+                            o.y == gObj.y) {
+                                duplicate = true;
+                                o.count = o.count + 1;
+                                break;
+                        }
+                    }
+                    
+                    if (!duplicate) {
+                        state.add(gObj);
                     }
                 }
-                
-                if (!duplicate) {
-                    state.add(gObj);
-                }
             }
-        }
-        
-        if (goal != null && state.size() == goal.size()) {
-            if (state.containsAll(goal)) {
-                finish("Zombie do good.", true);
-                return true;
+            
+            if (goal != null && state.size() == goal.size()) {
+                if (state.containsAll(goal)) {
+                    finish("Zombie do good.", true);
+                    return true;
+                }
             }
         }
         

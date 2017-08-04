@@ -233,9 +233,12 @@ public class ZombieLand extends World
     public void act()
     {
         if (!done) {
-            if (checkZombies() ) {
-                if (checkGoal()) {
-                }
+            synchronized (Zombie.class) {
+                          
+                if (checkZombies() ) {
+                    if (checkGoal()) {
+                    }
+                }                    
             }
         }
     }
