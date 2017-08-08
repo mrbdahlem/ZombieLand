@@ -1,0 +1,22 @@
+#BlueJ class context
+comment0.target=UltraZombie
+comment0.text=\r\n\ Write\ a\ description\ of\ class\ UltraZombie\ here.\r\n\ \r\n\ @author\ bdahlem\ \r\n\ @version\ 7/26/2017\r\n
+comment1.params=
+comment1.target=int\ isFacing()
+comment1.text=\r\n\ Determine\ which\ direction\ the\ UltraZombie\ is\ facing.\r\n\ \r\n\ @return\ a\ value\ of\ EAST,SOUTH,WEST,\ or\ NORTH\r\n
+comment2.params=
+comment2.target=void\ turnLeft()
+comment2.text=\r\n\ Turn\ 90\ degrees\ to\ the\ left\r\n
+comment3.params=
+comment3.target=void\ turnAround()
+comment3.text=\r\n\ Turn\ 180\ degrees\r\n
+comment4.params=
+comment4.target=boolean\ isRightClear()
+comment4.text=\r\n\ Check\ if\ there\ is\ a\ wall\ or\ the\ edge\ of\ the\ world\ to\ the\ right\ of\ the\ zombie.\r\n
+comment5.params=
+comment5.target=boolean\ isLeftClear()
+comment5.text=\r\n\ Check\ if\ there\ is\ a\ wall\ or\ the\ edge\ of\ the\ world\ to\ the\ left\ of\ the\ zombie.\r\n
+comment6.params=classname\ dx\ dy
+comment6.target=greenfoot.Actor\ checkDelta(java.lang.String,\ int,\ int)
+comment6.text=\r\n\ Check\ for\ an\ object\ of\ a\ particular\ class\ at\ an\ offset\ from\ the\ zombie\ or\ if\ that\ distance\ is\ beyond\ the\r\n\ edge\ of\ the\ world\r\n\r\n\ @param\ classname\ The\ class\ to\ check\ for.\ \ If\ null,\ look\ for\ the\ edge\ of\ the\ world\r\n\ @param\ dx\ The\ distance(in\ cells)\ along\ the\ x-axis\ to\ look\ for\ the\ object/edge\r\n\ @param\ dy\ The\ distance(in\ cells)\ along\ the\ y-axis\ to\ look\ for\ the\ object/edge\r\n\ @return\ The\ object\ at\ the\ offset,\ or\ a\ reference\ to\ this\ zombie\ if\ the\ offset\ is\ off\ the\ edge\ of\r\n\ \ \ \ \ \ \ \ \ the\ world,\ null\ if\ no\ object\ of\ the\ given\ class\ is\ at\ that\ distance\ or\ the\ world\ does\ not\r\n\ \ \ \ \ \ \ \ \ end\ within\ that\ distance.\r\n
+numComments=7

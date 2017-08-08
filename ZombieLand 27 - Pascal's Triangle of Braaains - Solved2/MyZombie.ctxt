@@ -1,0 +1,19 @@
+#BlueJ class context
+comment0.target=MyZombie
+comment0.text=\r\n\ Help\ Karl\ collect\ all\ of\ the\ brains.\r\n\ \r\n\ @author\ (your\ name)\ \r\n\ @version\ (a\ version\ number\ or\ a\ date)\r\n
+comment1.params=
+comment1.target=void\ plan()
+comment1.text=\r\n\ Karl's\ planned\ out\ actions\ to\ build\ the\ triangle\ of\ brains\ in\ front\ of\ him.\r\n
+comment2.params=
+comment2.target=void\ findCenter()
+comment2.text=\r\n\ Walk\ to\ the\ center\ by\ taking\ two\ steps\ forward\ then\ turning\ around\ and\ taking\ one\r\n\ step\ back.\r\n
+comment3.params=
+comment3.target=void\ addDown()
+comment3.text=\r\n\ Add\ all\ brains\ in\ the\ tree\ below\ the\ current\ position\r\n
+comment4.params=
+comment4.target=void\ leftBranch()
+comment4.text=\r\n\ Put\ down\ brains\ in\ the\ left\ branch\ from\ the\ current\ cell\r\n
+comment5.params=
+comment5.target=void\ rightBranch()
+comment5.text=\r\n\ Put\ down\ brains\ in\ the\ right\ branch\ from\ the\ current\ cell\r\n
+numComments=6
