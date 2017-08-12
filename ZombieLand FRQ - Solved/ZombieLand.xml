@@ -5,10 +5,10 @@
          <object classname="Brain">
             <location dir="0" x="2" y="7"/>
             <location dir="0" x="2" y="6"/>
-            <location dir="0" x="4" y="4"/>
-            <location dir="0" x="4" y="3"/>
-            <location dir="0" x="6" y="3"/>
-            <location dir="0" x="6" y="2"/>
+            <location dir="0" x="2" y="5"/>
+            <location dir="0" x="2" y="4"/>
+            <location dir="0" x="2" y="3"/>
+            <location dir="0" x="2" y="2"/>
             <location dir="0" x="4" y="7"/>
             <location dir="0" x="4" y="6"/>
             <location dir="0" x="4" y="5"/>
@@ -22,7 +22,7 @@
             <location dir="0" x="8" y="4"/>
             <location dir="0" x="8" y="3"/>
             <location dir="0" x="8" y="2"/>
-            <location dir="0" x="6" y="1"/>
+            <location dir="0" x="8" y="1"/>
          </object>
          <object classname="MyZombie">
             <location dir="0" x="0" y="7"/>
@@ -32,10 +32,10 @@
          <object classname="Brain">
             <location dir="0" x="2" y="7"/>
             <location dir="0" x="2" y="6"/>
-            <location dir="0" x="4" y="4"/>
-            <location dir="0" x="4" y="3"/>
-            <location dir="0" x="6" y="3"/>
-            <location dir="0" x="6" y="2"/>
+            <location dir="0" x="2" y="5"/>
+            <location dir="0" x="2" y="4"/>
+            <location dir="0" x="2" y="3"/>
+            <location dir="0" x="2" y="2"/>
             <location dir="0" x="4" y="7"/>
             <location dir="0" x="4" y="6"/>
             <location dir="0" x="4" y="5"/>
@@ -49,10 +49,12 @@
             <location dir="0" x="8" y="4"/>
             <location dir="0" x="8" y="3"/>
             <location dir="0" x="8" y="2"/>
-            <location dir="0" x="6" y="1"/>
+            <location dir="0" x="8" y="1"/>
          </object>
          <object classname="MyZombie">
-            <location dir="0" x="6" y="1"/>
+            <location x="8" y="1">
+                <call name="hasWon" value="true"/>
+            </location>
          </object>
       </objective>
    </world>
