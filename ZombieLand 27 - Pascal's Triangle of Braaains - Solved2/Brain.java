@@ -27,7 +27,6 @@ public class Brain extends Actor
      */
     public void act() 
     {
-        showNumBrainsHere();
     }    
     
     /**
@@ -40,6 +39,26 @@ public class Brain extends Actor
             try
             {
                 this.numBrains++;
+                
+                showNumBrainsHere();
+            }
+            catch (Exception e)
+            {
+            }
+        }
+    }
+    
+    /**
+     * Set the number of brains in this pile
+     */
+    public void setNum(int num)
+    {
+        synchronized(this.getClass())
+        {
+            try
+            {
+                this.numBrains = num;
+                showNumBrainsHere();
             }
             catch (Exception e)
             {
@@ -63,6 +82,9 @@ public class Brain extends Actor
                 if (this.numBrains < 1) {
                     World w = getWorld();
                     w.removeObject(this);
+                }
+                else {                
+                    showNumBrainsHere();
                 }
             }
             catch (Exception e)
