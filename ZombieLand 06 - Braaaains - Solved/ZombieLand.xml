@@ -5,9 +5,7 @@
          <object classname="Brain">
             <location dir="0" x="1" y="2"/>
             <location dir="0" x="1" y="1"/>
-            <location dir="0" x="1" y="0">
-	      <call name="setNum" value="1024"/>
-            </location>
+            <location count="3" dir="0" x="1" y="0"/>
          </object>
          <object classname="ZombieGoal">
             <location dir="0" x="2" y="2"/>

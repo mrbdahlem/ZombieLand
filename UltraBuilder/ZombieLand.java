@@ -135,6 +135,12 @@ public class ZombieLand extends World
                 }
                 // Create instances at this location
                 Constructor constructor = objClass.getConstructor();
+                int numBrains = 0;
+                if ("Brain".equals(className)) {
+                    numBrains = count;
+                    count = 1;
+                }
+                
                 for (; count > 0; count--) {
                     Actor a = (Actor)constructor.newInstance();
                     realWorld.addObject(a, x, y);
@@ -146,6 +152,12 @@ public class ZombieLand extends World
                             Method m = objClass.getMethod(call[0], params);
                             m.invoke(a, Integer.parseInt(call[1]));
                         }
+                    }
+                    
+                    if ("Brain".equals(className)) {
+                        Class[] params = new Class[]{int.class};
+                        Method setNum = objClass.getMethod("setNum", params);
+                        setNum.invoke(a, numBrains);
                     }
                 }
             }
