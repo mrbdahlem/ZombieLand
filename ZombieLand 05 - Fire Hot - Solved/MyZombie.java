@@ -34,7 +34,7 @@ public class MyZombie extends Zombie
         move();
         turnRight();
         turnRight();
-        turnLeft();
+        turnRight();
         move();
     }
 }

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <scenario>
-   <world height="7" width="13">
+   <world height="10" width="19">
       <initial>
          <object classname="MyZombie">
             <location dir="0" x="0" y="0">
