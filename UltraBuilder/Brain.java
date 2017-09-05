@@ -11,12 +11,14 @@ import java.awt.FontMetrics;
 public class Brain extends Actor
 {
     private GreenfootImage baseImage;
+    private int numBrains;
     
     /**
      * A disembodied brain.  Zombies love brains.
      */
     public Brain() {
         baseImage = getImage();
+        numBrains = 1;
     }
     
     /**
@@ -29,6 +31,47 @@ public class Brain extends Actor
     }    
     
     /**
+     * Add one to the number of brains in this pile
+     */
+    public void addBrain()
+    {
+        synchronized(this.getClass())
+        {
+            try
+            {
+                this.numBrains++;
+            }
+            catch (Exception e)
+            {
+            }
+        }
+    }
+    
+    /**
+     * Remove one brain from this pile. If this is the last brain,
+     * remove the pile from the world.
+     */
+    public void removeBrain()
+    {
+        synchronized(this.getClass())
+        {
+            try
+            {
+                this.numBrains--;
+            
+                // If there are no more brains in the pile
+                if (this.numBrains < 1) {
+                    World w = getWorld();
+                    w.removeObject(this);
+                }
+            }
+            catch (Exception e)
+            {
+            }
+        }
+    }
+    
+    /**
      * Update the image of this brain with the number of brains occupying this
      * cell.
      */
@@ -38,41 +81,20 @@ public class Brain extends Actor
         {
             try
             {
-                //this.getClass().wait();
-            
-                int numBrains = getIntersectingObjects(Brain.class).size() + 1;
+                // Deal with old zombies dropping extra brains the old way
+                //int numBrains = this.numBrains + getIntersectingObjects(Brain.class).size();
                 
                 if (numBrains > 1) {
+                    
                     String msg = "" + (numBrains);
                     
                     GreenfootImage img = new GreenfootImage(baseImage);
-            
-                    java.awt.Font f = new java.awt.Font("MONOSPACED", java.awt.Font.BOLD, 28);
-                    Graphics g = img.getAwtImage().createGraphics();
-                    g.setFont(f);
-                    FontMetrics fm = g.getFontMetrics(f);
-                    
-                    int textWidth = fm.stringWidth(msg);
-                    int textHeight = fm.getHeight() + fm.getMaxDescent();
-                    int textBottom = textHeight - fm.getMaxDescent();
+                    GreenfootImage num = new GreenfootImage(msg, 28, Color.WHITE, 
+                        new Color(0,0,0,0), new Color(0,0,0,0));
                         
-                    g = img.getAwtImage().createGraphics();
-                    g.setColor(java.awt.Color.BLACK);
-                    g.setFont(f);   
-                    
-                    int x = (img.getWidth()-textWidth) / 2;
-                    
-                    g.drawString(msg, x-1, textBottom-1);
-                    g.drawString(msg, x, textBottom-1);
-                    g.drawString(msg, x+1, textBottom-1);
-                    g.drawString(msg, x-1, textBottom);
-                    g.drawString(msg, x+1, textBottom);
-                    g.drawString(msg, x-1, textBottom+1);
-                    g.drawString(msg, x, textBottom+1);
-                    g.drawString(msg, x+1, textBottom+1);
-                    
-                    g.setColor(java.awt.Color.WHITE);
-                    g.drawString(msg, x, textBottom);
+                    int x = (img.getWidth() - num.getWidth()) / 2;
+                    int y = img.getHeight() - num.getHeight();
+                    img.drawImage(num, x, y);
                     
                     setImage(img);
                 }
@@ -86,6 +108,5 @@ public class Brain extends Actor
             {
             }
         }
-        
     }
 }
