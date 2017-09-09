@@ -21,6 +21,7 @@ public class MyZombie extends UltraZombie
      * This method is called whenever the 'Act' or 'Run' button gets pressed in the Greenfoot
      * environment.
      */
+    
     public void plan() 
     {
         followBrains();

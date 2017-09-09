@@ -41,6 +41,7 @@ public abstract class UltraZombie extends Zombie
     {
         synchronized (Zombie.class) {
             turn(2);
+            
         }
     }
     

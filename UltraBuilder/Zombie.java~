@@ -123,7 +123,7 @@ public abstract class Zombie extends Actor
     /**
      * Move forward one step.
      */
-    public final void move()
+    public final void move() throws 
     {
         synchronized (Zombie.class) {
             try {
