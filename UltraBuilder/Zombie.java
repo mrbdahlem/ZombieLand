@@ -1,6 +1,8 @@
 import greenfoot.*;  // (World, Actor, GreenfootImage, Greenfoot and MouseInfo)
 import java.awt.Graphics;
 import java.awt.FontMetrics;
+import java.awt.Graphics2D;
+import java.awt.image.BufferedImage;
 import java.util.List;
 import java.net.URLClassLoader;
 import java.lang.reflect.Constructor;
@@ -415,12 +417,18 @@ public abstract class Zombie extends Actor
         if (stillTrying()) {
             // If the zombie is carrying brains, add the number to the current frame.
             if (numBrains > 0) {
-                img = new GreenfootImage(images[dir][frame]);
-                GreenfootImage brainsLabel = new GreenfootImage("" + numBrains, 14, Color.BLACK, Color.WHITE);
+                GreenfootImage brainsLabel = new GreenfootImage("" + numBrains, 14, Color.WHITE, Color.BLACK);
+                BufferedImage blImg = brainsLabel.getAwtImage();
+                GreenfootImage frm = new GreenfootImage(images[dir][frame]);
+                BufferedImage frmImg = frm.getAwtImage();
                 
-                img.rotate(getRotation());
-                img.drawImage(brainsLabel, 0, 0);
-                img.rotate(-getRotation());
+                img = new GreenfootImage(frm.getWidth(), frm.getHeight());
+                BufferedImage bi = img.getAwtImage();
+                Graphics2D graphics = (Graphics2D)bi.getGraphics();
+                graphics.drawImage(frmImg, null, 0, 0);
+                graphics.rotate(Math.toRadians(-getRotation()), frm.getWidth() / 2, frm.getHeight() / 2);
+                graphics.drawImage(blImg, null, 0, 0);
+                graphics.rotate(Math.toRadians(getRotation()), frm.getWidth() / 2, frm.getHeight() / 2);
             }
             else {
                 img = images[dir][frame];
@@ -437,7 +445,7 @@ public abstract class Zombie extends Actor
             setRotation(90);
             img = images[1][1];
         }
-
+        
         setImage(img);
     }
 
@@ -580,7 +588,7 @@ public abstract class Zombie extends Actor
         GreenfootImage[] imageArr = new GreenfootImage[NUM_FRAMES];
 
         for (int i = 0; i < NUM_FRAMES; i++) {
-            imageArr[i] = new GreenfootImage(name + "-" + i + ".png");
+            imageArr[i] =  new GreenfootImage(name + "-" + i + ".png");
         }
 
         return imageArr;

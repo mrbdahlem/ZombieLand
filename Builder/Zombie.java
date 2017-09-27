@@ -1,6 +1,8 @@
 import greenfoot.*;  // (World, Actor, GreenfootImage, Greenfoot and MouseInfo)
 import java.awt.Graphics;
 import java.awt.FontMetrics;
+import java.awt.Graphics2D;
+import java.awt.image.BufferedImage;
 import java.util.List;
 import java.net.URLClassLoader;
 import java.lang.reflect.Constructor;
@@ -54,15 +56,22 @@ public abstract class Zombie extends Actor
                 // Wait until the zombie is in a world
                 while (getWorld() == null);
                 
-                plan();
                 synchronized (Zombie.class) {
-                    try {
-                        Zombie.class.wait();
-                        if (stillTrying()) {
-                           die();
+                    try {                        
+                        Zombie.class.wait();    // Wait for an act signal before beginning the plan
+                        
+                        plan();                 // Follow the plan
+                        
+                        Zombie.class.wait();    // Wait for an act signal after the plan ends for everything to settle down
+                        
+                        if (stillTrying()) {    // If the Zombie hasn't solved its problems,
+                           die();               // Kill it
                         }
                     }
-                    catch (InterruptedException e) {
+                    catch (InterruptedException | java.lang.IllegalStateException e) {
+                        // If the plan is interrupted, or the zombie was removed, causing an illegal state,
+                        // end the zombie
+                        die(true);
                     }
                 }
             }
@@ -79,12 +88,18 @@ public abstract class Zombie extends Actor
     public final void act()
     {
         synchronized (Zombie.class) {
-            frame = (frame + 1) % NUM_FRAMES;
+            if (!undead) {  // If the zombie is no more, stop doing things.                
+                return;
+            }
+            
+            frame = (frame + 1) % NUM_FRAMES; // Show the next animation frame
             showAnimationFrame();
+            
+            // Every other animation frame, perform one action
             if(frame % 2 == 0) {
-                Zombie.class.notify();
+                Zombie.class.notify();  // release the lock to perform the action
                 
-                if (undead && Math.random() < 0.1) {
+                if (undead && Math.random() < 0.1) {            // Play a random sound randomly if still running
                     sounds[(int)(Math.random() * 2)].play();
                 }
             }
@@ -97,9 +112,7 @@ public abstract class Zombie extends Actor
      * and turnRight() wait their turn so that they can happen asynchronously with
      * animations, etc.
      */
-    public void plan()
-    {
-    }
+    public abstract void plan();
 
     /**
      * Determine if this zombie is still struggling to make it in this world.
@@ -116,9 +129,10 @@ public abstract class Zombie extends Actor
     {
         synchronized (Zombie.class) {
             try {
-                Zombie.class.wait();
+                Zombie.class.wait();    // Wait for an act signal
+                
                 if (stillTrying()) {
-                    boolean success = handleWall();
+                    boolean success = handleWall(); 
                     success = success && handleBucket();
                     if (success) {
                         super.move(1);
@@ -139,13 +153,8 @@ public abstract class Zombie extends Actor
      */
     public final void turnRight()
     {
-        synchronized (Zombie.class) {
-            try {
-                Zombie.class.wait();
-                turn(1);
-            }
-            catch (InterruptedException e) {
-            }
+        synchronized (Zombie.class) {            
+            turn(1);            
         }
     }
 
@@ -153,17 +162,26 @@ public abstract class Zombie extends Actor
      * Turn to the right a given number of times
      * @param turns the number of times to turn 90 degrees to the right
      */
-    public final void turn(int turns) {
-        int degrees = turns * 90;
+    public final void turn(int turns)
+    {        
         synchronized (Zombie.class) {
-            if (stillTrying()) {
-                getImage().setTransparency(0);
-                super.turn(degrees);
-                showAnimationFrame();
-                getImage().setTransparency(255);
+            try 
+            {
+                Zombie.class.wait();
+                
+                int degrees = turns * 90;
+        
+                if (stillTrying()) {
+                    getImage().setTransparency(0);
+                    super.turn(degrees);
+                    showAnimationFrame();
+                    getImage().setTransparency(255);
+                }
+            }
+            catch (InterruptedException e) {
             }
         }
-    }
+    }   
 
     /**
      * Pick up brains if they exist.  End if not.
@@ -332,6 +350,27 @@ public abstract class Zombie extends Actor
     }
 
     /**
+     * Die, for reals this time.
+     */
+    public final void die(boolean fast)
+    {
+        synchronized (Zombie.class) {
+            if (!fast) {        
+                die();
+            }
+            else {
+                undead = false;
+                //thinker.interrupt();
+                
+                World w = getWorld();
+                if (w != null) {
+                    getWorld().removeObject(this);
+                }
+            }                            
+        }
+    }
+    
+    /**
      * Play a sound
      */
     public void playSound(int index) 
@@ -378,12 +417,18 @@ public abstract class Zombie extends Actor
         if (stillTrying()) {
             // If the zombie is carrying brains, add the number to the current frame.
             if (numBrains > 0) {
-                img = new GreenfootImage(images[dir][frame]);
-                GreenfootImage brainsLabel = new GreenfootImage("" + numBrains, 14, Color.BLACK, Color.WHITE);
+                GreenfootImage brainsLabel = new GreenfootImage("" + numBrains, 14, Color.WHITE, Color.BLACK);
+                BufferedImage blImg = brainsLabel.getAwtImage();
+                GreenfootImage frm = new GreenfootImage(images[dir][frame]);
+                BufferedImage frmImg = frm.getAwtImage();
                 
-                img.rotate(getRotation());
-                img.drawImage(brainsLabel, 0, 0);
-                img.rotate(-getRotation());
+                img = new GreenfootImage(frm.getWidth(), frm.getHeight());
+                BufferedImage bi = img.getAwtImage();
+                Graphics2D graphics = (Graphics2D)bi.getGraphics();
+                graphics.drawImage(frmImg, null, 0, 0);
+                graphics.rotate(Math.toRadians(-getRotation()), frm.getWidth() / 2, frm.getHeight() / 2);
+                graphics.drawImage(blImg, null, 0, 0);
+                graphics.rotate(Math.toRadians(getRotation()), frm.getWidth() / 2, frm.getHeight() / 2);
             }
             else {
                 img = images[dir][frame];
@@ -400,7 +445,7 @@ public abstract class Zombie extends Actor
             setRotation(90);
             img = images[1][1];
         }
-
+        
         setImage(img);
     }
 
@@ -543,7 +588,7 @@ public abstract class Zombie extends Actor
         GreenfootImage[] imageArr = new GreenfootImage[NUM_FRAMES];
 
         for (int i = 0; i < NUM_FRAMES; i++) {
-            imageArr[i] = new GreenfootImage(name + "-" + i + ".png");
+            imageArr[i] =  new GreenfootImage(name + "-" + i + ".png");
         }
 
         return imageArr;

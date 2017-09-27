@@ -1,6 +1,6 @@
 #BlueJ class context
 comment0.target=UltraZombie
-comment0.text=\r\n\ Write\ a\ description\ of\ class\ UltraZombie\ here.\r\n\ \r\n\ @author\ bdahlem\ \r\n\ @version\ 7/26/2017\r\n
+comment0.text=\r\n\ UltraZombies...\ Like\ Zombies,\ but\ better.\r\n\ \r\n\ @author\ bdahlem\ \r\n\ @version\ 7/26/2017\r\n
 comment1.params=
 comment1.target=int\ isFacing()
 comment1.text=\r\n\ Determine\ which\ direction\ the\ UltraZombie\ is\ facing.\r\n\ \r\n\ @return\ a\ value\ of\ EAST,SOUTH,WEST,\ or\ NORTH\r\n
